@@ -17,7 +17,8 @@
 		"hpkp": "^2.0.3",
 		"mocha": "^10.2.0",
 		"mongodb": "^6.2.0",
-		"mongoose": "^7.6.3"
+		"mongoose": "^7.6.3",
+		"node-fetch": "^3.3.2"
 	},
 	"repository": {
 		"type": "git",
@@ -31,7 +32,7 @@
 	"devDependencies": {
 		"@types/helmet": "^4.0.0"
 	},
-	"engines": { 
-		"node": "14.x"
+	"engines": {
+		"node": "18.17.1"
 	}
 }
