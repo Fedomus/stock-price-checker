@@ -13,6 +13,8 @@ async function obtenerStock(stock){
 
   if (!symbol || !latestPrice) return null;
 
+  latestPrice = parseFloat(latestPrice)
+
   return {
     symbol,
     latestPrice
@@ -86,26 +88,34 @@ module.exports = function (app) {
         stock = stock.toUpperCase();
     
         let stockApiData = await obtenerStock(stock)
-    
-        if(like == 'true'){
+
+        if(stockApiData){
+          if(like == 'true'){
           
-          await agregarLike(stock, ipClient)
+            await agregarLike(stock, ipClient)
+            
+          }
+      
+          let likesData = await obtenerLikes(stock)
           
+          let stockData = {};
+      
+          stockData.likes = likesData.likes.length ?? 0;
+          stockData.stock = stock;
+          stockData.price = stockApiData.latestPrice;
+      
+          res.status(200).json({stockData})
+          
+        } else {
+          res.status(200).json({stockData: []})
         }
     
-        let likesData = await obtenerLikes(stock)
-        
-        let stockData = {};
-    
-        stockData.likes = likesData.likes.length ?? 0;
-        stockData.stock = stock;
-        stockData.price = stockApiData.latestPrice;
-    
-        res.json({stockData})
-        
+     
       } else if (stock.length === 2){  
     
         let stockData = [];
+
+        let existenStocks = true;
     
         for (let elem of stock) {
     
@@ -120,22 +130,28 @@ module.exports = function (app) {
           let likesData = await obtenerLikes(elem)
           
           let stockApiData = await obtenerStock(elem);
-    
-          stockData.push({
-            likes : likesData.likes.length ?? 0,
-            stock : elem,
-            price : stockApiData.latestPrice
-          })
+
+          if(stockApiData){
+            stockData.push({
+              likes : likesData.likes.length ?? 0,
+              stock : elem,
+              price : stockApiData.latestPrice
+            })
+          } else{
+            existenStocks = false;
+          }
     
         }
 
-        stockData[0].rel_likes = stockData[0].likes - stockData[1].likes
-        stockData[1].rel_likes = stockData[1].likes - stockData[0].likes
-    
-        delete stockData[0].likes
-        delete stockData[1].likes
+        if(existenStocks){
+          stockData[0].rel_likes = stockData[0].likes - stockData[1].likes
+          stockData[1].rel_likes = stockData[1].likes - stockData[0].likes
+      
+          delete stockData[0].likes
+          delete stockData[1].likes
+        }
         
-        res.json({stockData})
+        res.status(200).json({stockData})
         
       }
     

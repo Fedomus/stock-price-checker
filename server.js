@@ -18,32 +18,6 @@ app.use(cors({origin: '*'})); //For FCC testing purposes only
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// const CSPDirectives = helmet.contentSecurityPolicy.getDefaultDirectives();
-// CSPDirectives["script-src"] = [
-//   "'self'",
-//   "'unsafe-inline'"
-// ];
-// CSPDirectives["style-src"] = [
-//   "'self'",
-//   "'unsafe-inline'"
-// ];
-// CSPDirectives["img-src"] = [
-//   "'self'",
-//   "'unsafe-inline'",
-//   "cdn.freecodecamp.org"
-// ]
-// CSPDirectives["connect-src"] = [
-//   "'self'"
-// ];
-// CSPDirectives["script-src-attr"] = ["'unsafe-inline'"]
-// CSPDirectives['upgrade-insecure-requests'] = []
-
-// app.use(helmet({
-//   contentSecurityPolicy: {
-//     directives: CSPDirectives,
-//   }
-// }));
-
 app.use(helmet({
   contentSecurityPolicy: {
     directives:{
@@ -54,6 +28,7 @@ app.use(helmet({
     }
   }
 }))
+
 app.enable('trust proxy')
 
 //Index page (static HTML)

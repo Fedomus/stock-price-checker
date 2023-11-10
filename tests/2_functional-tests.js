@@ -5,18 +5,17 @@ const server = require('../server');
 const {assert, use} = chai;
 
 use(chaiHttp);
-let requester = chai.request(server).keepOpen()
 
 describe('Functional Tests', function() {
     
     describe('GET /api/stock-prices return stockData object', function() {
       
-        it('1 stock', function() {
-         requester
-          .get('/api/stock-prices')
-          .query({stock: 'goog'})
-          .end(function(err, res){
-            
+        it('1 stock', function(done) {
+            chai.request(server)
+            .get('/api/stock-prices')
+            .send({stock: 'goog'})
+            .end(function(err, res){
+                
                 assert.equal(res.status, 200)
                 assert.typeOf(res.body, 'object')
                 assert.property(res.body, 'stockData');
@@ -29,12 +28,14 @@ describe('Functional Tests', function() {
                 assert.typeOf(res.body.stockData.likes, "number")
                 
             })
+
+            done()
         })
         
-        it('1 stock with like', function() {
-          requester
+        it('1 stock with like', function(done) {
+          chai.request(server)
             .get('/api/stock-prices')
-            .query({ stock: 'goog', like: 'true' })
+            .send({ stock: 'goog', like: 'true' })
             .end(function(err, res){
 
                 assert.equal(res.status, 200)
@@ -47,13 +48,15 @@ describe('Functional Tests', function() {
                 assert.typeOf(res.body.stockData.likes, 'number')
     
             });
+
+            done()
         });
         
-        it('1 stock with like again', function() {
-          requester
+        it('1 stock with like again', function(done) {
+            chai.request(server)
             .get('/api/stock-prices')
-            .query({ stock: 'goog', like: 'true' })
-            .then(function(res){
+            .send({ stock: 'goog', like: 'true' })
+            .end(function(res){
   
                 assert.equal(res.status, 200)
                 assert.property(res.body, 'stockData')
@@ -64,13 +67,15 @@ describe('Functional Tests', function() {
                 assert.typeOf(res.body.stockData.likes, 'number')
     
             })
+
+            done()
         })
         
-        it('2 stocks', function() {
-          requester
+        it('2 stocks', function(done) {
+            chai.request(server)
             .get('/api/stock-prices')
-            .query({ stock: ['goog', 'msft'] })
-            .then(function(res){
+            .send({ stock: ['goog', 'msft'] })
+            .end(function(res){
 
                 assert.equal(res.status, 200)
                 assert.property(res.body, 'stockData')
@@ -86,15 +91,17 @@ describe('Functional Tests', function() {
                 assert.property(res.body.stockData[1], 'rel_likes')
                 assert.isNumber(res.body.stockData[1].price)
                 assert.isNumber(res.body.stockData[1].rel_likes)
-    
+ 
             })
+
+            done()
         })
         
-        it('2 stocks with like', function() {
-          requester
+        it('2 stocks with like', function(done) {
+            chai.request(server)
             .get('/api/stock-prices')
-            .query({ stock: ['goog', 'msft'], like: 'true' })
-            .then(function(res){
+            .send({ stock: ['goog', 'msft'], like: 'true' })
+            .end(function(res){
   
                 assert.equal(res.status, 200)
                 assert.property(res.body, 'stockData')
@@ -110,8 +117,10 @@ describe('Functional Tests', function() {
                 assert.property(res.body.stockData[1], 'rel_likes')
                 assert.isNumber(res.body.stockData[1].price)
                 assert.isNumber(res.body.stockData[1].rel_likes)
-    
+
             });
+
+            done()
         }); 
     });
 });
