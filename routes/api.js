@@ -2,6 +2,7 @@
 
 const Stock = require("../models/stock.js");
 const bcrypt = require("bcrypt");
+const fetch = require("node-fetch")
 
 async function obtenerStock(stock){
   
@@ -9,7 +10,7 @@ async function obtenerStock(stock){
 
   let responseData = await fetch(url);
 
-  const { symbol, latestPrice } = await responseData.json();
+  let { symbol, latestPrice } = await responseData.json();
 
   if (!symbol || !latestPrice) return null;
 
