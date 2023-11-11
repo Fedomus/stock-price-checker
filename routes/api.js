@@ -2,24 +2,48 @@
 
 const Stock = require("../models/stock.js");
 const bcrypt = require("bcrypt");
-const fetch = require("node-fetch")
+const https = require("node:https");
 
 async function obtenerStock(stock){
   
   const url = `https://stock-price-checker-proxy.freecodecamp.rocks/v1/stock/${stock}/quote`;
+  
+  let responseData = '';
 
-  let responseData = await fetch(url);
+  let call = new Promise((resolve, reject) => {
 
-  let { symbol, latestPrice } = await responseData.json();
+    https.get(url, function (res) {
 
-  if (!symbol || !latestPrice) return null;
+      res.on('data', function (chunk) {
+        responseData += chunk;
+      }).on('end', function () {
+          resolve(responseData);
+      });
 
-  latestPrice = parseFloat(latestPrice)
+    }).on('error', function (e) {
+        reject(e);
+    });
 
-  return {
-    symbol,
-    latestPrice
-  }
+  })
+
+  return call.then(data => {
+
+    let {symbol, latestPrice} = JSON.parse(data);
+
+    if (!symbol || !latestPrice) return null;
+          
+    latestPrice = parseFloat(latestPrice)
+  
+    return {
+      symbol,
+      latestPrice
+    }
+
+  })
+
+
+
+
 }
 
 async function obtenerLikes(stock){
